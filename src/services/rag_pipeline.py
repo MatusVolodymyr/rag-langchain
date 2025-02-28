@@ -1,5 +1,5 @@
 import openai
-from vector_store import VectorStore
+from src.services.vector_store import VectorStore
 
 
 class RAGPipeline:

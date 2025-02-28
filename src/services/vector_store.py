@@ -19,11 +19,11 @@ class VectorStore:
             raise ValueError(
                 f"Index '{index_name}' does not exist. Please create it first."
             )
+
         self.embedding_model = HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-MiniLM-L6-v2"
         )
 
-        # Text chunking settings
         self.text_splitter = TokenTextSplitter(
             chunk_size=chunk_size, chunk_overlap=chunk_overlap
         )
@@ -43,7 +43,7 @@ class VectorStore:
                     (f"{doc['id']}_chunk{i}", vector, {"text": chunk})
                 )  # Store chunked text ("123_chunk0", [0.1, 0.2, 0.3], {"text": "This is a long document"})
 
-        self.index.upsert(vectors)
+        self.index.upsert(vectors, namespace="doc_embeddings")
         print(f"Stored {len(vectors)} chunks in Pinecone.")
 
     def retrieve_documents(self, query, top_k=3):
