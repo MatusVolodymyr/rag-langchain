@@ -38,7 +38,7 @@ This is a Retrieval-Augmented Generation (RAG) system API built with FastAPI. It
 │
 └───tests
     └───test_query.py
-
+```
 
 ## Features
 
