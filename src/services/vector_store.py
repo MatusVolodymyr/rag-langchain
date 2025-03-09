@@ -3,6 +3,7 @@ from pinecone.grpc import PineconeGRPC as Pinecone
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter, TokenTextSplitter
 from langchain_community.document_loaders import TextLoader, PyMuPDFLoader
+from src.core.logger import logger
 
 
 class VectorStore:
@@ -78,22 +79,21 @@ class VectorStore:
         """
         Extract text from file, chunk it, embed, and store in Pinecone.
         """
-        docs = self.process_file(file_path)
-        # texts = [doc.page_content for doc in docs]
-        chunks = self.text_splitter.split_documents(docs)  # Chunk text
-
-        vectors = []
-        for i, chunk in enumerate(chunks):
-            vector = self.embedding_model.embed_query(
-                chunk.page_content
-            )  # Extract text
-            vectors.append(
-                (
-                    f"{os.path.basename(file_path)}_chunk{i}",
-                    vector,
-                    {"text": chunk.page_content, **chunk.metadata},
+        try:
+            docs = self.process_file(file_path)
+            chunks = self.text_splitter.split_documents(docs)
+            vectors = []
+            for i, chunk in enumerate(chunks):
+                vector = self.embedding_model.embed_query(chunk.page_content)
+                vectors.append(
+                    (
+                        f"{os.path.basename(file_path)}_chunk{i}",
+                        vector,
+                        {"text": chunk.page_content, **chunk.metadata},
+                    )
                 )
-            )
-
-        self.index.upsert(vectors)
-        print(f"Stored {len(vectors)} chunks from {file_path} in Pinecone.")
+            self.index.upsert(vectors)
+            logger.info(f"Stored {len(vectors)} chunks from {file_path} in Pinecone.")
+        except Exception as e:
+            logger.error(f"Error processing file {file_path}", exc_info=True)
+            raise e

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from api.endpoints import documents, query, response
-from core.config import settings
+from src.api.endpoints import documents, query, response
+from src.core.config import settings
 
 app = FastAPI(title="RAG System API", version="1.0")
 
