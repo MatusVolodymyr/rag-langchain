@@ -11,7 +11,6 @@ COPY environment.yml .
 RUN conda env create -f environment.yml
 
 # Ensure the newly created environment is used:
-# Replace 'rag_env' with the name of your conda environment in environment.yml
 ENV PATH /opt/conda/envs/rag_langchain/bin:$PATH
 
 # Copy the rest of the project files into the container
